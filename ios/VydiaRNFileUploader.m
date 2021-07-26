@@ -57,7 +57,7 @@ RCT_EXPORT_METHOD(getFileInfo:(NSString *)path resolve:(RCTPromiseResolveBlock)r
     @try {
         // Escape non latin characters in filename
         NSString *escapedPath = [path stringByAddingPercentEncodingWithAllowedCharacters: NSCharacterSet.URLQueryAllowedCharacterSet];
-       
+
         NSURL *fileUri = [NSURL URLWithString:escapedPath];
         NSString *pathWithoutProtocol = [fileUri path];
         NSString *name = [fileUri lastPathComponent];
@@ -239,6 +239,38 @@ RCT_EXPORT_METHOD(cancelUpload: (NSString *)cancelUploadId resolve:(RCTPromiseRe
     resolve([NSNumber numberWithBool:YES]);
 }
 
+/*
+ * Suspend file upload
+ * Accepts upload ID as a first argument, this upload will be suspended
+ */
+RCT_EXPORT_METHOD(suspendUpload: (NSString *)suspendUploadId resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject) {
+    [_urlSession getTasksWithCompletionHandler:^(NSArray *dataTasks, NSArray *uploadTasks, NSArray *downloadTasks) {
+        for (NSURLSessionTask *uploadTask in uploadTasks) {
+            if ([uploadTask.taskDescription isEqualToString:suspendUploadId]){
+                // == checks if references are equal, while isEqualToString checks the string value
+                [uploadTask suspend];
+            }
+        }
+    }];
+    resolve([NSNumber numberWithBool:YES]);
+}
+
+/*
+ * Resume file upload
+ * Accepts upload ID as a first argument, this upload will be suspended
+ */
+RCT_EXPORT_METHOD(resumeUpload: (NSString *)resumeUploadId resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject) {
+    [_urlSession getTasksWithCompletionHandler:^(NSArray *dataTasks, NSArray *uploadTasks, NSArray *downloadTasks) {
+        for (NSURLSessionTask *uploadTask in uploadTasks) {
+            if ([uploadTask.taskDescription isEqualToString:resumeUploadId]){
+                // == checks if references are equal, while isEqualToString checks the string value
+                [uploadTask resume];
+            }
+        }
+    }];
+    resolve([NSNumber numberWithBool:YES]);
+}
+
 - (NSData *)createBodyWithBoundary:(NSString *)boundary
                          path:(NSString *)path
                          parameters:(NSDictionary *)parameters
@@ -251,7 +283,7 @@ RCT_EXPORT_METHOD(cancelUpload: (NSString *)cancelUploadId resolve:(RCTPromiseRe
 
     // resolve path
     NSURL *fileUri = [NSURL URLWithString: escapedPath];
-    
+
     NSError* error = nil;
     NSData *data = [NSData dataWithContentsOfURL:fileUri options:NSDataReadingMappedAlways error: &error];
 
