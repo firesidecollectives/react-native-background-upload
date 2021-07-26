@@ -99,6 +99,40 @@ export const cancelUpload = (cancelUploadId: string): Promise<boolean> => {
 };
 
 /*
+Suspends active upload by string ID of the upload.
+
+Upload ID is returned in a promise after a call to startUpload method,
+use it to suspend started upload.
+
+Returns a promise with boolean true if operation was successfully completed.
+Will reject if there was an internal error or ID format is invalid.
+
+*/
+export const suspend = (suspendlUploadId: string): Promise<boolean> => {
+  if (typeof suspendlUploadId !== 'string') {
+    return Promise.reject(new Error('Upload ID must be a string'));
+  }
+  return NativeModule.suspendUpload(suspendlUploadId);
+};
+
+/*
+Resumes active upload by string ID of the upload.
+
+Upload ID is returned in a promise after a call to startUpload method,
+use it to resume started upload.
+
+Returns a promise with boolean true if operation was successfully completed.
+Will reject if there was an internal error or ID format is invalid.
+
+*/
+export const resume = (resumelUploadId: string): Promise<boolean> => {
+  if (typeof resumelUploadId !== 'string') {
+    return Promise.reject(new Error('Upload ID must be a string'));
+  }
+  return NativeModule.resumelUpload(resumelUploadId);
+};
+
+/*
 Listens for the given event on the given upload ID (resolved from startUpload).
 If you don't supply a value for uploadId, the event will fire for all uploads.
 Events (id is always the upload ID):
