@@ -129,7 +129,7 @@ export const resume = (resumelUploadId: string): Promise<boolean> => {
   if (typeof resumelUploadId !== 'string') {
     return Promise.reject(new Error('Upload ID must be a string'));
   }
-  return NativeModule.resumelUpload(resumelUploadId);
+  return NativeModule.resumeUpload(resumelUploadId);
 };
 
 /*
