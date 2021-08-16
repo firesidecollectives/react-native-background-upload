@@ -108,7 +108,7 @@ Returns a promise with boolean true if operation was successfully completed.
 Will reject if there was an internal error or ID format is invalid.
 
 */
-export const suspend = (suspendlUploadId: string): Promise<boolean> => {
+export const suspendUpload = (suspendlUploadId: string): Promise<boolean> => {
   if (typeof suspendlUploadId !== 'string') {
     return Promise.reject(new Error('Upload ID must be a string'));
   }
@@ -125,11 +125,11 @@ Returns a promise with boolean true if operation was successfully completed.
 Will reject if there was an internal error or ID format is invalid.
 
 */
-export const resume = (resumelUploadId: string): Promise<boolean> => {
-  if (typeof resumelUploadId !== 'string') {
+export const resumeUpload = (resumeUploadId: string): Promise<boolean> => {
+  if (typeof resumeUploadId !== 'string') {
     return Promise.reject(new Error('Upload ID must be a string'));
   }
-  return NativeModule.resumeUpload(resumelUploadId);
+  return NativeModule.resumeUpload(resumeUploadId);
 };
 
 /*
@@ -153,4 +153,4 @@ export const addListener = (
   });
 };
 
-export default { startUpload, cancelUpload, addListener, getFileInfo };
+export default { startUpload, cancelUpload, suspendUpload, resumeUpload, addListener, getFileInfo };
