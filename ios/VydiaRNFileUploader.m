@@ -229,14 +229,16 @@ RCT_EXPORT_METHOD(startUpload:(NSDictionary *)options resolve:(RCTPromiseResolve
  */
 RCT_EXPORT_METHOD(cancelUpload: (NSString *)cancelUploadId resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject) {
     [_urlSession getTasksWithCompletionHandler:^(NSArray *dataTasks, NSArray *uploadTasks, NSArray *downloadTasks) {
+        bool cancelled = NO;
         for (NSURLSessionTask *uploadTask in uploadTasks) {
             if ([uploadTask.taskDescription isEqualToString:cancelUploadId]){
                 // == checks if references are equal, while isEqualToString checks the string value
                 [uploadTask cancel];
+                cancelled = YES;
             }
         }
+        resolve([NSNumber numberWithBool:cancelled]);
     }];
-    resolve([NSNumber numberWithBool:YES]);
 }
 
 /*
@@ -245,14 +247,16 @@ RCT_EXPORT_METHOD(cancelUpload: (NSString *)cancelUploadId resolve:(RCTPromiseRe
  */
 RCT_EXPORT_METHOD(suspendUpload: (NSString *)suspendUploadId resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject) {
     [_urlSession getTasksWithCompletionHandler:^(NSArray *dataTasks, NSArray *uploadTasks, NSArray *downloadTasks) {
+        bool suspended = NO;
         for (NSURLSessionTask *uploadTask in uploadTasks) {
             if ([uploadTask.taskDescription isEqualToString:suspendUploadId]){
                 // == checks if references are equal, while isEqualToString checks the string value
+                suspended = YES;
                 [uploadTask suspend];
             }
         }
+        resolve([NSNumber numberWithBool:suspended]);
     }];
-    resolve([NSNumber numberWithBool:YES]);
 }
 
 /*
@@ -261,14 +265,16 @@ RCT_EXPORT_METHOD(suspendUpload: (NSString *)suspendUploadId resolve:(RCTPromise
  */
 RCT_EXPORT_METHOD(resumeUpload: (NSString *)resumeUploadId resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject) {
     [_urlSession getTasksWithCompletionHandler:^(NSArray *dataTasks, NSArray *uploadTasks, NSArray *downloadTasks) {
+        bool resumed = NO;
         for (NSURLSessionTask *uploadTask in uploadTasks) {
             if ([uploadTask.taskDescription isEqualToString:resumeUploadId]){
                 // == checks if references are equal, while isEqualToString checks the string value
+                resumed = YES;
                 [uploadTask resume];
             }
         }
+        resolve([NSNumber numberWithBool:resumed]);
     }];
-    resolve([NSNumber numberWithBool:YES]);
 }
 
 - (NSData *)createBodyWithBoundary:(NSString *)boundary
