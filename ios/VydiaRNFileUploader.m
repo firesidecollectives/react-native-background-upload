@@ -81,7 +81,7 @@ RCT_EXPORT_METHOD(getFileInfo:(NSString *)path resolve:(RCTPromiseResolveBlock)r
         resolve(params);
     }
     @catch (NSException *exception) {
-        reject(@"RN Uploader", exception.name, nil);
+        reject(@"RN Uploader", [NSString stringWithFormat:@"%@: %@", exception.name, exception.reason], nil);
     }
 }
 
@@ -218,7 +218,7 @@ RCT_EXPORT_METHOD(startUpload:(NSDictionary *)options resolve:(RCTPromiseResolve
         resolve(uploadTask.taskDescription);
     }
     @catch (NSException *exception) {
-        reject(@"RN Uploader", exception.name, nil);
+        reject(@"RN Uploader", [NSString stringWithFormat:@"%@: %@", exception.name, exception.reason], nil);
     }
 }
 
@@ -228,7 +228,8 @@ RCT_EXPORT_METHOD(startUpload:(NSDictionary *)options resolve:(RCTPromiseResolve
  * Event "cancelled" will be fired when upload is cancelled.
  */
 RCT_EXPORT_METHOD(cancelUpload: (NSString *)cancelUploadId resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject) {
-    [_urlSession getTasksWithCompletionHandler:^(NSArray *dataTasks, NSArray *uploadTasks, NSArray *downloadTasks) {
+    NSString* groupId = nil;
+    [[self urlSession:groupId] getTasksWithCompletionHandler:^(NSArray *dataTasks, NSArray *uploadTasks, NSArray *downloadTasks) {
         bool cancelled = NO;
         for (NSURLSessionTask *uploadTask in uploadTasks) {
             if ([uploadTask.taskDescription isEqualToString:cancelUploadId]){
@@ -246,7 +247,8 @@ RCT_EXPORT_METHOD(cancelUpload: (NSString *)cancelUploadId resolve:(RCTPromiseRe
  * Accepts upload ID as a first argument, this upload will be suspended
  */
 RCT_EXPORT_METHOD(suspendUpload: (NSString *)suspendUploadId resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject) {
-    [_urlSession getTasksWithCompletionHandler:^(NSArray *dataTasks, NSArray *uploadTasks, NSArray *downloadTasks) {
+    NSString* groupId = nil;
+    [[self urlSession:groupId] getTasksWithCompletionHandler:^(NSArray *dataTasks, NSArray *uploadTasks, NSArray *downloadTasks) {
         bool suspended = NO;
         for (NSURLSessionTask *uploadTask in uploadTasks) {
             if ([uploadTask.taskDescription isEqualToString:suspendUploadId]){
@@ -264,7 +266,8 @@ RCT_EXPORT_METHOD(suspendUpload: (NSString *)suspendUploadId resolve:(RCTPromise
  * Accepts upload ID as a first argument, this upload will be suspended
  */
 RCT_EXPORT_METHOD(resumeUpload: (NSString *)resumeUploadId resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject) {
-    [_urlSession getTasksWithCompletionHandler:^(NSArray *dataTasks, NSArray *uploadTasks, NSArray *downloadTasks) {
+    NSString* groupId = nil;
+    [[self urlSession:groupId] getTasksWithCompletionHandler:^(NSArray *dataTasks, NSArray *uploadTasks, NSArray *downloadTasks) {
         bool resumed = NO;
         for (NSURLSessionTask *uploadTask in uploadTasks) {
             if ([uploadTask.taskDescription isEqualToString:resumeUploadId]){
